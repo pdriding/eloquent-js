@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Page Title</title>
+    <style>
+      /* Basic body styling */
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #f0f0f0;
+      }
+
+      /* Main content styling */
+      main {
+        text-align: center;
+        position: relative;
+      }
+
+      /* Image styling */
+      img {
+        position: absolute;
+        transition: all 0.1s ease;
+      }
+
+      #cat {
+        width: 100px;
+        height: auto;
+      }
+
+      #hat {
+        width: 50px;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <!-- Images -->
+      <img src="img/img-1.png" id="cat" />
+      <img src="img/img-2.png" id="hat" />
+    </main>
+
+    <script>
+      let cat = document.querySelector("#cat");
+      let hat = document.querySelector("#hat");
+
+      let angle = 0;
+      let lastTime = null;
+      function animate(time) {
+        if (lastTime != null) angle += (time - lastTime) * 0.001;
+        lastTime = time;
+        cat.style.top = Math.sin(angle) * 40 + 40 + "px";
+        cat.style.left = Math.cos(angle) * 200 + 230 + "px";
+
+        // Your extensions here.
+        hat.style.top = Math.sin(angle + Math.PI) * 40 + 40 + "px";
+        hat.style.left = Math.cos(angle + Math.PI) * 200 + 230 + "px";
+
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+    </script>
+  </body>
+</html>

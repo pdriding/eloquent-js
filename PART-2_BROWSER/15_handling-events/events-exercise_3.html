@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Page Title</title>
+    <style></style>
+  </head>
+  <style>
+    button {
+      width: 150px;
+      height: 50px;
+      margin: 10px;
+    }
+  </style>
+  <body>
+    <tab-panel>
+      <div data-tabname="one">Tab one</div>
+      <div data-tabname="two">Tab two</div>
+      <div data-tabname="three">Tab three</div>
+    </tab-panel>
+    <script>
+      let current = new Array(2);
+
+      function asTabs(node) {
+        let nodes = Array.from(node.children);
+        nodes.forEach((a) => {
+          // Create Button
+          let button = document.createElement("button");
+          button.innerHTML = a.dataset.tabname;
+          button.dataset.name = a.dataset.tabname;
+
+          // Add button functionality
+          button.addEventListener("click", function (e) {
+            // Reset
+            current[0].style.display = "none";
+            current[1].style.backgroundColor = "";
+            current = new Array(2);
+
+            // Set current
+            current[0] = nodes.filter(
+              (node) => node.dataset.tabname === e.target.dataset.name
+            )[0];
+            current[1] = e.target;
+
+            // Set styles
+            current[0].style.display = "block";
+            current[1].style.backgroundColor = "green";
+          });
+
+          // Insert Button
+          document.body.insertBefore(button, node);
+
+          // Hide tab content
+          if (a.dataset.tabname === "one") {
+            current[0] = a;
+            current[1] = button;
+            button.style.backgroundColor = "green";
+          } else {
+            a.style.display = "none";
+          }
+        });
+      }
+
+      asTabs(document.querySelector("tab-panel"));
+    </script>
+  </body>
+</html>
+
+<!-- 
+
+} -->

@@ -1,0 +1,18 @@
+<script>
+  const URL = "https://eloquentjavascript.net/author";
+  const headers = ["text/plain", "text/html", "application/json"];
+
+  async function hello(url, header) {
+    fetch(url, {
+      headers: { Accept: `${header}` },
+    })
+      .then((r) => r.text())
+      .then((text) => {
+        console.log(text);
+      });
+  }
+
+  for (a of headers) {
+    hello(URL, a);
+  }
+</script>

@@ -1,0 +1,110 @@
+<!-- <canvas width="600" height="200"></canvas>
+<script>
+  let cx = document.querySelector("canvas").getContext("2d");
+
+  cx.beginPath();
+
+  // cx.moveTo(50, 30); // Top left corner
+  // cx.lineTo(150, 30); // Top right corner
+  // cx.lineTo(130, 70); // Bottom right corner
+  // cx.lineTo(70, 70); // Bottom left corner
+  // cx.closePath();
+
+  // cx.moveTo(50, 20); // Top point
+  // cx.lineTo(80, 50); // Right point
+  // cx.lineTo(50, 80); // Bottom point
+  // cx.lineTo(20, 50); // Left point
+
+  // cx.closePath();
+
+  // cx.fillStyle = "red";
+  // cx.fill(); // Fills the shape with the current fillStyle
+  // cx.stroke();
+
+  // Assuming 'cx' is your canvas rendering context
+
+  // Set the center of the rotation (the center of the rectangle)
+  const centerX = 50;
+  const centerY = 50;
+
+  // Draw the diamond using rotation around the center
+
+  // Save the current context to restore it after transformation
+  cx.save();
+
+  // Translate to the center of the shape
+  cx.translate(centerX, centerY);
+
+  // Apply the rotation (45 degrees in radians)
+  cx.rotate(Math.PI / 4); // 45 degrees rotation
+
+  // Set the fill color to red
+  cx.fillStyle = "red";
+
+  // Draw the rectangle, which will be rotated into a diamond shape
+  cx.fillRect(-30, -30, 60, 60); // Width and height of 60px, and translate to center
+
+  // Restore the transformation matrix
+  cx.restore();
+</script> -->
+
+<!-- <canvas width="600" height="200"></canvas>
+<script>
+  let cx = document.querySelector("canvas").getContext("2d");
+
+  let startX = 0;
+  let startY = 0;
+  let endX = 300;
+  let endY = 0;
+
+  cx.beginPath();
+
+  for (let i = 20; i < 220; i += 20) {
+    endY = i;
+    cx.moveTo(startX, startY); // Top left corner
+    cx.lineTo(endX, endY); // Top right corner
+    startX = endX;
+    startY = endY;
+    endX = endX === 0 ? 300 : 0;
+  }
+
+  cx.stroke();
+</script> -->
+
+<canvas width="600" height="200"></canvas>
+<script>
+  let cx = document.querySelector("canvas").getContext("2d");
+  // Set the radius of the circle
+  let radius = 10;
+
+  // Calculate the center position of the circle (offset by radius for proper positioning)
+  let xCenter = 250 + radius,
+    yCenter = 20 + radius;
+
+  // Begin a new path for drawing
+  cx.beginPath();
+
+  // Start the path at the rightmost point of the circle (angle = 0)
+  cx.moveTo(xCenter + radius, yCenter);
+  cx.moveTo(270, 30);
+
+  // Loop through 300 steps to create 300 points along the circle's circumference
+  for (let i = 1; i < 300; i++) {
+    // Calculate the current angle (from 0 to 2π) for each point along the circle
+    let angle = (i * Math.PI * 2) / 300;
+
+    // Calculate the new position (x, y) for each point using cos and sin for circular motion
+    // Adjust with the center position (xCenter, yCenter) and multiply by the radius to scale
+    cx.lineTo(
+      xCenter + Math.cos(angle) * radius, // x-coordinate
+      yCenter + Math.sin(angle) * radius // y-coordinate
+    );
+    // radius++;
+  }
+
+  // Close the path, connecting the last point back to the first one (optional for complete circle)
+  cx.closePath();
+
+  // Stroke (draw) the circle with the current stroke style
+  cx.stroke();
+</script>

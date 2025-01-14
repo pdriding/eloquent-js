@@ -1,0 +1,13 @@
+{
+  "name": "10",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "practice10.js",
+  "scripts": {
+    "start": "node practice10.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

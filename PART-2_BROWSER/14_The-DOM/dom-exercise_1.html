@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Page Title</title>
+  </head>
+  <body>
+    <header>
+      <h1>Welcome to My Website</h1>
+    </header>
+
+    <main>
+      <h1>Mountains</h1>
+
+      <div id="mountains"></div>
+    </main>
+
+    <script>
+      const mountains = [
+        { name: "Kilimanjaro", height: 5895, place: "Tanzania" },
+        { name: "Everest", height: 8848, place: "Nepal" },
+        { name: "Mount Fuji", height: 3776, place: "Japan" },
+        { name: "Vaalserberg", height: 323, place: "Netherlands" },
+        { name: "Denali", height: 6168, place: "United States" },
+        { name: "Popocatepetl", height: 5465, place: "Mexico" },
+        { name: "Mont Blanc", height: 4808, place: "Italy/France" },
+      ];
+
+      // Your code here
+
+      const mtDiv = document.getElementById("mountains");
+      const table = document.createElement("table");
+      mtDiv.appendChild(table);
+
+      function createHeaderRow(tr, header) {
+        const headers = document.createElement("th");
+        headers.appendChild(document.createTextNode(header));
+        tr.appendChild(headers);
+      }
+
+      function createDataRow(tr, data, ta = false) {
+        const row = document.createElement("td");
+        row.appendChild(document.createTextNode(data));
+        if (ta === true) {
+          row.style.textAlign = "right";
+        }
+        tr.appendChild(row);
+      }
+
+      // Header names
+      const keys = Object.keys(mountains[0]);
+
+      for (let i = 0; i < mountains.length; i++) {
+        const values = Object.values(mountains[i]);
+
+        const tableRow = document.createElement("tr");
+        table.appendChild(tableRow);
+
+        for (let n = 0; n < keys.length; n++) {
+          // Create Header
+          if (i === 0) {
+            createHeaderRow(tableRow, keys[n]);
+          } else {
+            if (typeof values[n] === "number") {
+              createDataRow(tableRow, values[n], true);
+            } else {
+              createDataRow(tableRow, values[n]);
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

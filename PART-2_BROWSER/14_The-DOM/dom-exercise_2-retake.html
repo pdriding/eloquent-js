@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Page Title</title>
+  </head>
+  <body>
+    <header>
+      <h1>Welcome to My Website</h1>
+    </header>
+
+    <main>
+      <h1>Heading with a <span>span</span> element.</h1>
+      <p>A paragraph with <span>one</span>, <span>two</span> spans.</p>
+    </main>
+
+    <script>
+      // This function searches for all descendant elements with a specific tag name,
+      // starting from a given node, and returns them in an array.
+      function byTagName(currentNode, tagName) {
+        if (!currentNode) return []; // Ensure the node is valid (not null or undefined)
+
+        let results = [];
+
+        if (currentNode.nodeName === tagName.toUpperCase()) {
+          results.push(currentNode);
+        }
+
+        let children = Array.from(currentNode.children);
+        children.forEach((child) => {
+          results = results.concat(byTagName(child, tagName));
+        });
+
+        return results;
+      }
+
+      // Test cases
+      console.log(byTagName(document.body.childNodes[3], "h1").length);
+      // → 1 (One H1 inside <main>)
+      console.log(byTagName(document.body.childNodes[3], "span").length);
+      // → 3 (Three SPANs inside <main>)
+      let para = document.querySelector("p");
+      console.log(byTagName(para, "span").length);
+      // → 2 (Two SPANs inside the <p> element)
+    </script>
+  </body>
+</html>

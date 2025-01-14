@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Page Title</title>
+    <style></style>
+  </head>
+  <body>
+    <p class="balloon">🎈</p>
+
+    <script>
+      const balloon = document.querySelector(".balloon");
+      let size;
+
+      function setSize(newSize) {
+        size = newSize;
+        balloon.style.fontSize = size + "px";
+      }
+      setSize(20);
+
+      let counter = 0;
+
+      function handleEvent(e) {
+        if (size > 30) {
+          balloon.textContent = "💥";
+          document.removeEventListener("keydown", handleEvent);
+        }
+
+        if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setSize(size * 1.1);
+        }
+
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          setSize(size * 0.9);
+        }
+      }
+      document.addEventListener("keydown", handleEvent);
+    </script>
+  </body>
+</html>

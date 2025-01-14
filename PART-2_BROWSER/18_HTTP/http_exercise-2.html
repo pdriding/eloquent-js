@@ -1,0 +1,30 @@
+<textarea id="code">return "hi";</textarea>
+<button id="button">Run</button>
+<pre id="output"></pre>
+
+<script>
+  const input = document.querySelector("#code");
+  const button = document.querySelector("#button");
+  const output = document.querySelector("#output");
+
+  button.addEventListener("click", process);
+
+  function process() {
+    let code = input.value;
+    require(code);
+  }
+
+  function require(name) {
+    try {
+      // Create a function from the code and execute it
+      let wrapper = new Function(name);
+      let result = wrapper(); // Execute the generated function
+
+      // Display the result in the output
+      output.textContent = result;
+    } catch (e) {
+      // Catch errors and display the error message
+      output.textContent = `Error: ${e.message}`;
+    }
+  }
+</script>

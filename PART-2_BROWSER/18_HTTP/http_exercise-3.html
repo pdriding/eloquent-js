@@ -1,13 +1,143 @@
-<div id="grid">
-  <p><input type="checkbox" checked /></p>
-</div>
+<div id="grid"></div>
 <button id="next">Next generation</button>
 
 <script>
-  // Your code here.
-  function buildTable() {}
+  let inputs = [];
+  const grid = document.querySelector("#grid");
+  const nextBtn = document.querySelector("#next");
 
-  document.querySelector("#grid").appendChild(buildTable());
+  nextBtn.addEventListener("click", () => {
+    nextMove(grid);
+  });
+
+  function changeLevel(alive) {
+    console.log(grid);
+  }
+
+  function nextMove(grid) {
+    // Any live cell with fewer than two or more than three live neighbors dies.
+
+    let alive = inputs.filter((input, i) => {
+      if (input.checked !== true) return aliveCheck(input, i, false);
+      if (input.checked === true) return aliveCheck(input, i, true);
+    });
+
+    console.log(alive);
+
+    changeLevel(alive);
+  }
+
+  function aliveCheck(input, i, alive) {
+    let neighbours = 0;
+
+    let row = Number(input.dataset.row);
+    let col = Number(input.dataset.col);
+    let width = Number(inputs[inputs.length - 1].dataset.col) + 1;
+
+    // To the left
+    if (inputs[i + 1] && inputs[i + 1].checked === true) {
+      neighbours++;
+    }
+    // To the right
+    if (inputs[i - 1] && inputs[i - 1].checked === true) {
+      neighbours++;
+    }
+    // Above
+    if (
+      inputs[(row - 1) * width + col] &&
+      inputs[(row - 1) * width + col].checked === true
+    ) {
+      neighbours++;
+    }
+    // Above right
+    if (
+      inputs[(row - 1) * width + (col + 1)] &&
+      inputs[(row - 1) * width + (col + 1)].checked === true
+    ) {
+      neighbours++;
+    }
+    // Above left
+    if (
+      inputs[(row - 1) * width + (col - 1)] &&
+      inputs[(row - 1) * width + (col - 1)].checked === true
+    ) {
+      neighbours++;
+    }
+    // Below
+    if (
+      inputs[(row + 1) * width + col] &&
+      inputs[(row + 1) * width + col].checked === true
+    ) {
+      neighbours++;
+    }
+    // Below right
+    if (
+      inputs[(row + 1) * width + (col + 1)] &&
+      inputs[(row + 1) * width + (col + 1)].checked === true
+    ) {
+      neighbours++;
+    }
+    // Below left
+    if (
+      inputs[(row + 1) * width + (col - 1)] &&
+      inputs[(row + 1) * width + (col - 1)].checked === true
+    ) {
+      neighbours++;
+    }
+
+    // Any live cell with fewer than two or more than three live neighbors dies.
+    if (alive && (neighbours < 2 || neighbours > 3)) {
+      input.checked = false;
+      return input;
+    }
+    // Any live cell with two or three live neighbors lives on to the next generation.
+    if (alive && (neighbours === 2 || neighbours === 3)) {
+      input.checked = true;
+      return input;
+    }
+    // Any dead cell with exactly three live neighbors becomes a live cell.
+    if (neighbours === 3 && !alive) {
+      input.checked = true;
+      return input;
+    }
+  }
+
+  function checked(grid) {
+    let children = Array.from(grid.children[0].children);
+
+    for (child of children) {
+      for (test of child.children) {
+        inputs.push(test);
+      }
+    }
+
+    inputs.forEach((a) => {
+      let num = Math.random();
+      num < 0.5 ? (a.checked = true) : (a.checked = false);
+    });
+  }
+
+  //  Build Table
+  function buildTable() {
+    let table = document.createElement("table");
+    let row;
+
+    for (let row = 0; row < 20; row++) {
+      tableRow = document.createElement("tr");
+      table.appendChild(tableRow);
+      for (let col = 0; col < 30; col++) {
+        let checked = document.createElement("input");
+        checked.type = "checkbox";
+        checked.dataset.row = row;
+        checked.dataset.col = col;
+        tableRow.appendChild(checked);
+      }
+    }
+    return table;
+  }
+
+  grid.appendChild(buildTable());
+  checked(grid);
 </script>
 
 <!-- <p><input type="checkbox" checked> (checkbox)</p> -->

@@ -2,29 +2,33 @@
 <button id="next">Next generation</button>
 
 <script>
-  let inputs = [];
   const grid = document.querySelector("#grid");
   const nextBtn = document.querySelector("#next");
+
+  let inputs = [];
+  let height = 20;
+  let width = 30;
 
   nextBtn.addEventListener("click", () => {
     nextMove(grid);
   });
 
-  function changeLevel(alive) {
-    console.log(grid);
+  function changeLevel() {
+    grid.innerHTML = "";
+    grid.appendChild(buildTable(true));
   }
 
   function nextMove(grid) {
     // Any live cell with fewer than two or more than three live neighbors dies.
 
-    let alive = inputs.filter((input, i) => {
-      if (input.checked !== true) return aliveCheck(input, i, false);
-      if (input.checked === true) return aliveCheck(input, i, true);
+    let alive = inputs.map((input, i) => {
+      return aliveCheck(input, i, input.checked);
     });
 
-    console.log(alive);
-
+    inputs = alive;
+    // console.log(inputs);
     changeLevel(alive);
+    // checkboxesFromGrid(alive);
   }
 
   function aliveCheck(input, i, alive) {
@@ -32,7 +36,6 @@
 
     let row = Number(input.dataset.row);
     let col = Number(input.dataset.col);
-    let width = Number(inputs[inputs.length - 1].dataset.col) + 1;
 
     // To the left
     if (inputs[i + 1] && inputs[i + 1].checked === true) {
@@ -100,44 +103,57 @@
       input.checked = true;
       return input;
     }
+    return input;
   }
 
-  function checked(grid) {
-    let children = Array.from(grid.children[0].children);
-
-    for (child of children) {
-      for (test of child.children) {
-        inputs.push(test);
-      }
+  function boolValue() {
+    let value = [];
+    for (let i = 0; i < height * width; i++) {
+      value[i] = Math.random() < 0.3;
     }
+    return value;
+  }
 
-    inputs.forEach((a) => {
-      let num = Math.random();
-      num < 0.5 ? (a.checked = true) : (a.checked = false);
-    });
+  function checkboxesFromGrid(grid) {
+    grid.forEach((value, i) => (inputs[i].checked = value));
   }
 
   //  Build Table
-  function buildTable() {
+  function buildTable(next = false) {
     let table = document.createElement("table");
     let row;
+    let int = 0;
 
-    for (let row = 0; row < 20; row++) {
-      tableRow = document.createElement("tr");
-      table.appendChild(tableRow);
-      for (let col = 0; col < 30; col++) {
+    for (let row = 0; row < height; row++) {
+      for (let col = 0; col < width; col++) {
         let checked = document.createElement("input");
         checked.type = "checkbox";
         checked.dataset.row = row;
         checked.dataset.col = col;
-        tableRow.appendChild(checked);
+        if (next == false) {
+          inputs.push(checked);
+          grid.appendChild(checked);
+        }
+        if (next == true) {
+          grid.appendChild(inputs[int]);
+          int++;
+        }
       }
+      grid.appendChild(document.createElement("br"));
     }
     return table;
   }
 
   grid.appendChild(buildTable());
-  checked(grid);
+  checkboxesFromGrid(boolValue());
 </script>
 
-<!-- <p><input type="checkbox" checked> (checkbox)</p> -->
+<!-- <p><input type="checkbox" checked> (checkbox)</p> 
+
+// function checked(grid) { // let children =
+Array.from(grid.children[0].children); // inputs.forEach((a) => { // let num =
+Math.random(); // num < 0.5 ? (a.checked = true) : (a.checked = false); // });
+// }
+
+
+-->

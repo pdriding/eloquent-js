@@ -46,23 +46,43 @@ var PictureCanvas = class PictureCanvas {
   }
   syncState(picture) {
     if (this.picture == picture) return;
+
+    let oldPicture = this.picture;
     this.picture = picture;
-    drawPicture(this.picture, this.dom, scale);
+
+    drawPicture(oldPicture, this.picture, this.dom, scale);
   }
 };
 
-function drawPicture(picture, canvas, scale) {
-  canvas.width = picture.width * scale;
-  canvas.height = picture.height * scale;
+function updatePicture(prevPicture, newPicture) {}
+
+function drawPicture(previous, picture, canvas, scale) {
+  if (
+    previous == null ||
+    previous.width != picture.width ||
+    previous.height != picture.height
+  ) {
+    canvas.width = picture.width * scale;
+    canvas.height = picture.height * scale;
+    previous = null;
+  }
   let cx = canvas.getContext("2d");
 
+  let counter = 0;
   for (let y = 0; y < picture.height; y++) {
     for (let x = 0; x < picture.width; x++) {
-      cx.fillStyle = picture.pixel(x, y);
-      cx.fillRect(x * scale, y * scale, scale, scale);
+      if (
+        previous == null ||
+        previous.pixels[counter] !== picture.pixels[counter]
+      ) {
+        cx.fillStyle = picture.pixel(x, y);
+        cx.fillRect(x * scale, y * scale, scale, scale);
+      }
+      counter++;
     }
   }
 }
+// console.log(y * picture.width + (x % picture.width));
 
 PictureCanvas.prototype.mouse = function (downEvent, onDown) {
   if (downEvent.button != 0) return;
@@ -344,7 +364,6 @@ function pictureFromImage(image) {
 
 function historyUpdateState(state, action) {
   if (action.undo == true) {
-    console.log(state);
     if (state.done.length == 0) return state;
     return {
       ...state,
@@ -366,7 +385,6 @@ function historyUpdateState(state, action) {
 
 var UndoButton = class UndoButton {
   constructor(state, { dispatch }) {
-    console.log(dispatch);
     this.dom = elt(
       "button",
       {

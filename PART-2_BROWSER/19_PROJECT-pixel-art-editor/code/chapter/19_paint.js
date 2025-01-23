@@ -82,7 +82,6 @@ function drawPicture(previous, picture, canvas, scale) {
     }
   }
 }
-// console.log(y * picture.width + (x % picture.width));
 
 PictureCanvas.prototype.mouse = function (downEvent, onDown) {
   if (downEvent.button != 0) return;
@@ -241,6 +240,15 @@ function rectangle(start, state, dispatch) {
   }
   drawRectangle(start);
   return drawRectangle;
+}
+
+function circle(pos, state, dispatch) {
+  console.log(pos);
+  // Your code here
+  function drawCircle() {
+    console.log(state);
+  }
+  drawCircle();
 }
 
 var around = [
@@ -407,7 +415,7 @@ var startState = {
   doneAt: 0,
 };
 
-var baseTools = { draw, fill, rectangle, pick };
+var baseTools = { draw, fill, rectangle, pick, circle };
 
 var baseControls = [
   ToolSelect,
@@ -432,6 +440,10 @@ function startPixelEditor({
   });
   return app.dom;
 }
+
+let dom = startPixelEditor({
+  tools: { ...baseTools, circle },
+});
 
 // -------- EXERCISE ----------
 

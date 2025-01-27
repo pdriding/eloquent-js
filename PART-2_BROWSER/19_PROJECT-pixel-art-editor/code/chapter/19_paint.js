@@ -245,43 +245,6 @@ function rectangle(start, state, dispatch) {
   return drawRectangle;
 }
 
-// function circle(start, state, dispatch) {
-//   console.log(start);
-//   // Your code here
-//   function drawCircle(pos) {
-//     // console.log(pos, state);
-//     let xStart = Math.min(start.x, pos.x);
-//     let yStart = Math.min(start.y, pos.y);
-//     let xEnd = Math.max(start.x, pos.x);
-//     let yEnd = Math.max(start.y, pos.y);
-//     let drawn = [];
-
-//     for (let y2 = yStart; y2 <= yEnd; y2++) {
-//       for (let x2 = xStart; x2 <= xEnd; x2++) {
-//         let xDif = Math.sqrt((xEnd - x2) ** 2);
-//         let yDif = Math.sqrt((yEnd - y2) ** 2);
-//         let x = x2;
-//         let y = y2;
-
-//         console.log("y:", y, "ydif:", yDif);
-//         // console.log("x:", x, "xdif:", xDif);
-//         // if (xDif > 0 || yDif > 0) {
-//         drawn.push({ x, y, color: state.color });
-//         x = x2 - xDif;
-//         y = y2 - yDif;
-//         drawn.push({ x, y, color: state.color });
-//         // }
-
-//         // console.log(drawn);
-//       }
-//     }
-
-//     dispatch({ picture: state.picture.draw(drawn) });
-//   }
-//   drawCircle(start);
-//   return drawCircle;
-// }
-
 function calculateDistance(startX, startY, currentX, currentY) {
   // Calculate the differences in the coordinates
   const dx = currentX - startX;
@@ -294,6 +257,7 @@ function calculateDistance(startX, startY, currentX, currentY) {
 }
 
 function makeOdd(number) {
+  if (number === 0) return 0;
   if (number % 2 === 0) {
     // If the number is even, add 1 to make it odd
     return number + 1;
@@ -301,51 +265,70 @@ function makeOdd(number) {
   return number; // If the number is already odd, return it unchanged
 }
 
-function circle(start, state, dispatch) {
-  console.log(start);
-  // Your code here
+// function circle(start, state, dispatch) {
+//   // Your code here
+//   function drawCircle(pos) {
+//     // console.log(pos, state);
+//     let xStart = Math.min(start.x, pos.x);
+//     let yStart = Math.min(start.y, pos.y);
+//     let xEnd = Math.max(start.x, pos.x);
+//     let yEnd = Math.max(start.y, pos.y);
+//     let drawn = [];
+//     let distance = makeOdd(
+//       Math.round(calculateDistance(xStart, yStart, xEnd, yEnd))
+//     );
 
+//     let x = 0;
+//     let y = 0;
+
+//     for (let y1 = start.y; y1 < distance * 2 + start.y + 1; y1++) {
+//       for (let x1 = start.x; x1 < distance * 2 + start.x + 1; x1++) {
+//         let test = distance * 2;
+//         let centre = Math.ceil((test - 1) / 2);
+
+//         x = x1 - centre;
+//         y = y1 - centre;
+
+//         console.log(calculateDistance(start.x, start.y, x, y), distance);
+//         if (calculateDistance(start.x, start.y, x, y) <= distance) {
+//           drawn.push({ x, y, color: state.color });
+//         }
+//       }
+//     }
+//     console.log(drawn);
+//     dispatch({ picture: state.picture.draw(drawn) });
+//   }
+//   drawCircle(start);
+//   return drawCircle;
+// }
+
+function circle(start, state, dispatch) {
+  // Your code here
   function drawCircle(pos) {
     // console.log(pos, state);
-    let xStart = Math.min(start.x, pos.x);
-    let yStart = Math.min(start.y, pos.y);
-    let xEnd = Math.max(start.x, pos.x);
-    let yEnd = Math.max(start.y, pos.y);
+
     let drawn = [];
-    let distance = makeOdd(
-      Math.round(calculateDistance(xStart, yStart, xEnd, yEnd))
-    );
+    let radius = Math.sqrt((pos.x - start.x) ** 2 + (pos.y - start.y) ** 2);
+    let radiusC = Math.ceil(radius);
 
-    let x = 0;
-    let y = 0;
-
-    // TODO Get it to wrap around the centre square as distance gets further
-    // for (let y1 = start.y; y1 <= distance * 1.5 + start.y; y1++) {
-    //   for (let x1 = start.x; x1 <= distance * 1.5 + start.x; x1++) {
-    for (let y1 = start.y; y1 < distance + start.y; y1++) {
-      for (let x1 = start.x; x1 < distance + start.x; x1++) {
-        let centre = (distance - 1) / 2;
-        // console.log(distance);
-        // 3*3 1,1
-        // 5*5 2,2
-        // 7*7 3,3
-        // console.log(xStart, start.x);
-        console.log(distance);
-        if (distance === 1) {
-          x = start.x;
-          y = start.y;
-        } else {
-          x = x1 - centre;
-          y = y1 - centre;
-        }
-        console.log(x, y, start.y, distance * 1.5 + start.y);
-
-        if (true) {
-          drawn.push({ x, y, color: state.color });
-        }
+    for (let y1 = -radiusC; y1 <= radiusC; y1++) {
+      for (let x1 = -radiusC; x1 <= radiusC; x1++) {
+        const dist = Math.sqrt(x1 ** 2 + y1 ** 2);
+        if (dist > radius) continue;
+        let y = start.y + y1,
+          x = start.x + x1;
+        if (
+          y < 0 ||
+          y >= state.picture.height ||
+          x < 0 ||
+          x >= state.picture.width
+        )
+          continue;
+        drawn.push({ x, y, color: state.color });
       }
     }
 
+    console.log(drawn);
     dispatch({ picture: state.picture.draw(drawn) });
   }
   drawCircle(start);

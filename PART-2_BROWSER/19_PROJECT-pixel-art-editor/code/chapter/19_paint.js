@@ -224,10 +224,29 @@ function draw(pos, state, dispatch) {
   return drawPixel;
 }
 
+function line(start, state, dispatch) {
+  console.log("line");
+  function drawLine(pos) {
+    let xStart = Math.min(start.x, pos.x);
+    let yStart = Math.min(start.y, pos.y);
+    let xEnd = Math.max(start.x, pos.x);
+    let yEnd = Math.max(start.y, pos.y);
+    let drawn = [];
+    console.log(start, pos);
+    for (let i = xStart; i < xEnd; i++) {
+      let x = i;
+      let y = start.y;
+      drawn.push({ x, y, color: state.color });
+    }
+    console.log(drawn);
+    dispatch({ picture: state.picture.draw(drawn) });
+  }
+  drawLine(start);
+  return drawLine;
+}
+
 function rectangle(start, state, dispatch) {
-  console.log(999);
   function drawRectangle(pos) {
-    console.log("hmm");
     let xStart = Math.min(start.x, pos.x);
     let yStart = Math.min(start.y, pos.y);
     let xEnd = Math.max(start.x, pos.x);
@@ -238,7 +257,6 @@ function rectangle(start, state, dispatch) {
         drawn.push({ x, y, color: state.color });
       }
     }
-    console.log(555, drawn);
     dispatch({ picture: state.picture.draw(drawn) });
   }
   drawRectangle(start);
@@ -499,7 +517,7 @@ var startState = {
   doneAt: 0,
 };
 
-var baseTools = { draw, fill, rectangle, pick, circle };
+var baseTools = { draw, fill, rectangle, pick, circle, line };
 
 var baseControls = [
   ToolSelect,
@@ -526,7 +544,7 @@ function startPixelEditor({
 }
 
 let dom = startPixelEditor({
-  tools: { ...baseTools, circle },
+  tools: { ...baseTools, circle, line },
 });
 
 // -------- EXERCISE ----------

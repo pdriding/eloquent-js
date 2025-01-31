@@ -224,6 +224,10 @@ function draw(pos, state, dispatch) {
   return drawPixel;
 }
 
+function slopeRound(num) {
+  return Math.round(num * 10);
+}
+
 function line(start, state, dispatch) {
   console.log("line");
   function drawLine(pos) {
@@ -231,14 +235,36 @@ function line(start, state, dispatch) {
     let yStart = Math.min(start.y, pos.y);
     let xEnd = Math.max(start.x, pos.x);
     let yEnd = Math.max(start.y, pos.y);
+
+    // Difference
+    let xDif = Math.abs(xEnd - xStart);
+    let yDif = Math.abs(yEnd - yStart);
+    let begin = xDif > yDif ? xStart : yStart;
+    let extra = xDif > yDif ? Math.abs(yEnd - yStart) : Math.abs(xEnd - xStart);
+
+    let end = xDif > yDif ? xEnd : yEnd;
+
+    let slope = xDif > yDif ? yDif / xDif : xDif / yDif;
+
     let drawn = [];
-    console.log(start, pos);
-    for (let i = xStart; i < xEnd; i++) {
-      let x = i;
-      let y = start.y;
-      drawn.push({ x, y, color: state.color });
+
+    let i;
+    let z;
+    let x;
+
+    let num = Math.round(end / 3);
+    let counter = 0;
+
+    for (i = begin; i < end; i++) {
+      for (z = 0; z <= yEnd - yStart; z++) {
+        console.log(Math.round(slope));
+        y = start.y;
+        x = i;
+
+        drawn.push({ x, y, color: state.color });
+      }
     }
-    console.log(drawn);
+
     dispatch({ picture: state.picture.draw(drawn) });
   }
   drawLine(start);

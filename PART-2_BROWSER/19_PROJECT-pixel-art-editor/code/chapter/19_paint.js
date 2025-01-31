@@ -228,8 +228,106 @@ function slopeRound(num) {
   return Math.round(num * 10);
 }
 
+// function line(start, state, dispatch) {
+//   console.log("line");
+//   function drawLine(pos) {
+//     let xStart = Math.min(start.x, pos.x);
+//     let yStart = Math.min(start.y, pos.y);
+//     let xEnd = Math.max(start.x, pos.x);
+//     let yEnd = Math.max(start.y, pos.y);
+
+//     // Difference
+//     let xDif = Math.abs(xEnd - xStart);
+//     let yDif = Math.abs(yEnd - yStart);
+//     let begin = xDif > yDif ? xStart : yStart;
+//     let extra = xDif > yDif ? Math.abs(yEnd - yStart) : Math.abs(xEnd - xStart);
+
+//     let end = xDif > yDif ? xEnd : yEnd;
+
+//     let slope = xDif > yDif ? yDif / xDif : xDif / yDif;
+
+//     let drawn = [];
+
+//     let i;
+//     let z;
+//     let x;
+
+//     let num = Math.round(end / 3);
+//     let counter = 0;
+
+//     for (i = begin; i < 20 + begin; i++) {
+//       for (z = 0; z <= 5; z++) {
+//         console.log(Math.round(slope));
+//         y = start.y + z;
+//         x = i;
+
+//         drawn.push({ x, y, color: state.color });
+//         if (z === 5) {
+//           console.log(1);
+//         }
+//       }
+//     }
+
+//     dispatch({ picture: state.picture.draw(drawn) });
+//   }
+//   drawLine(start);
+//   return drawLine;
+// }
+
+//  ---- LATEST -----
+
+// function line(start, state, dispatch) {
+//   console.log("line");
+//   function drawLine(pos) {
+//     let xStart = Math.min(start.x, pos.x);
+//     let yStart = Math.min(start.y, pos.y);
+//     let xEnd = Math.max(start.x, pos.x);
+//     let yEnd = Math.max(start.y, pos.y);
+
+//     // Difference
+//     let xDif = Math.abs(xEnd - xStart);
+//     let yDif = Math.abs(yEnd - yStart);
+//     let begin = xDif > yDif ? xStart : yStart;
+//     let extra = xDif > yDif ? Math.abs(yEnd - yStart) : Math.abs(xEnd - xStart);
+
+//     let end = xDif > yDif ? xEnd : yEnd;
+
+//     let slope = xDif > yDif ? yDif / xDif : xDif / yDif;
+
+//     let drawn = [];
+
+//     let i;
+//     let z;
+//     let x;
+
+//     let counter = 0;
+//     let counter2 = 1;
+//     let slopeTimesAxis = Math.round(slope * end);
+//     let divide = Math.round(end / slopeTimesAxis);
+
+//     for (i = begin; i < end; i++) {
+//       if (counter === divide) {
+//         counter = 0;
+//         counter2++;
+//       }
+//       for (z = 0; z < slopeTimesAxis; z++) {
+//         console.log(slopeTimesAxis, slope);
+//         if (z === counter2) {
+//           y = start.y + z;
+//           x = i;
+//           drawn.push({ x, y, color: state.color });
+//           counter++;
+//         }
+//       }
+//     }
+
+//     dispatch({ picture: state.picture.draw(drawn) });
+//   }
+//   drawLine(start);
+//   return drawLine;
+// }
+
 function line(start, state, dispatch) {
-  console.log("line");
   function drawLine(pos) {
     let xStart = Math.min(start.x, pos.x);
     let yStart = Math.min(start.y, pos.y);
@@ -252,16 +350,24 @@ function line(start, state, dispatch) {
     let z;
     let x;
 
-    let num = Math.round(end / 3);
     let counter = 0;
+    let counter2 = 1;
+    let slopeTimesAxis = Math.round(slope * end);
+    let divide = Math.round(end / slopeTimesAxis);
 
     for (i = begin; i < end; i++) {
-      for (z = 0; z <= yEnd - yStart; z++) {
-        console.log(Math.round(slope));
-        y = start.y;
-        x = i;
-
-        drawn.push({ x, y, color: state.color });
+      if (counter === divide) {
+        counter = 0;
+        counter2++;
+      }
+      for (z = 0; z < slopeTimesAxis; z++) {
+        console.log(slopeTimesAxis, slope);
+        if (z === counter2) {
+          y = start.y + z;
+          x = i;
+          drawn.push({ x, y, color: state.color });
+          counter++;
+        }
       }
     }
 
@@ -270,6 +376,58 @@ function line(start, state, dispatch) {
   drawLine(start);
   return drawLine;
 }
+
+// function line(start, state, dispatch) {
+//   console.log("line");
+//   function drawLine(pos) {
+//     let xStart = Math.min(start.x, pos.x);
+//     let yStart = Math.min(start.y, pos.y);
+//     let xEnd = Math.max(start.x, pos.x);
+//     let yEnd = Math.max(start.y, pos.y);
+
+//     // Difference
+//     let xDif = Math.abs(xEnd - xStart);
+//     let yDif = Math.abs(yEnd - yStart);
+//     let begin = xDif > yDif ? xStart : yStart;
+//     let extra = xDif > yDif ? Math.abs(yEnd - yStart) : Math.abs(xEnd - xStart);
+
+//     let end = xDif > yDif ? xEnd : yEnd;
+
+//     let slope = xDif > yDif ? yDif / xDif : xDif / yDif;
+
+//     let drawn = [];
+
+//     let i;
+//     let z;
+//     let x;
+
+//     let num = Math.round(end / 3);
+
+//     let counter = 0;
+//     let counter2 = 0;
+//     let test = 20 / 5;
+
+//     for (i = begin; i < 20 + begin; i++) {
+//       if (counter === test) {
+//         counter = 0;
+//         counter2++;
+//       }
+//       for (z = 0; z < 5; z++) {
+//         if (z === counter2) {
+//           y = start.y + z;
+//           x = i;
+//           console.log(999, extra);
+//           drawn.push({ x, y, color: state.color });
+//           counter++;
+//         }
+//       }
+//     }
+
+//     dispatch({ picture: state.picture.draw(drawn) });
+//   }
+//   drawLine(start);
+//   return drawLine;
+// }
 
 function rectangle(start, state, dispatch) {
   function drawRectangle(pos) {

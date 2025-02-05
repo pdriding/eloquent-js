@@ -247,11 +247,15 @@ function line(start, state, dispatch) {
     let test = 0;
     let secondAxis = Math.round(slope * Math.abs(end - begin));
 
+    let tester = false;
+
     if (begin > end) {
+      console.log(9494949);
       [begin, end] = [end, begin];
     }
 
     if (begin2 > end2) {
+      console.log(7777777777777);
       [begin2, end2] = [end2, begin2];
     }
 
@@ -262,16 +266,18 @@ function line(start, state, dispatch) {
         if (xDif > yDif) {
           // slope = (end2 - begin2) / (end - begin);
           slope = (end2 - begin2) / (end - begin);
-          console.log(end2 - begin2, Math.round((i - begin) * slope));
+          // console.log(end2 - begin2, Math.round((i - begin) * slope));
+          // console.log(1, slope);
 
           x = i;
           y = Math.round((i - begin) * slope) + begin2;
           drawn.push({ x, y, color: state.color });
         } else {
           slope = (end - begin) / (end2 - begin2);
-
+          // console.log(2, Math.round((n - begin2) / slope) + begin);
           y = i;
-          x = Math.round((n - begin2) * slope) + begin;
+
+          x = Math.round((i - begin) / slope) + begin2;
           drawn.push({ x, y, color: state.color });
         }
       }

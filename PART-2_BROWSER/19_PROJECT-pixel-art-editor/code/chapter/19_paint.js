@@ -244,38 +244,65 @@ function line(start, state, dispatch) {
 
     let slope = xDif > yDif ? yDif / xDif : xDif / yDif;
 
-    let test = 0;
-    let secondAxis = Math.round(slope * Math.abs(end - begin));
-
-    let tester = false;
+    let xNeg = false;
+    let yNeg = false;
 
     if (begin > end) {
       [begin, end] = [end, begin];
+      xNeg = true;
+    } else {
+      xNeg = false;
     }
 
     if (begin2 > end2) {
-      console.log(8888888);
       [begin2, end2] = [end2, begin2];
+      yNeg = true;
+    } else {
+      yNeg = false;
     }
 
     let drawn = [];
 
     for (let i = begin; i <= end; i++) {
       for (let n = begin2; n <= end2; n++) {
-        console.log(slope);
+        // On X Axis
         if (xDif > yDif) {
           slope = (end2 - begin2) / (end - begin);
-
           x = i;
 
-          // y = Math.round((i - begin) * slope) + begin2;
-          y = Math.round((i - begin) * -slope) + end2;
+          if (!yNeg && !xNeg) {
+            y = Math.round((i - begin) * slope) + begin2;
+          }
+          if (yNeg && !xNeg) {
+            y = Math.round((i - begin) * -slope) + end2;
+          }
+          if (yNeg && xNeg) {
+            y = Math.round((i - begin) * slope) + begin2;
+          }
+          if (!yNeg && xNeg) {
+            y = Math.round((i - begin) * -slope) + end2;
+          }
           drawn.push({ x, y, color: state.color });
-        } else {
-          slope = (end - begin) / (end2 - begin2);
+        }
 
+        // On Y Axis
+        if (yDif > xDif) {
+          slope = (end - begin) / (end2 - begin2);
           y = i;
-          x = Math.round((i - begin) / slope) + begin2;
+
+          if (!xNeg && yNeg) {
+            x = Math.round((i - begin) / -slope) + end2;
+          }
+          if (!xNeg && !yNeg) {
+            x = Math.round((i - begin) / slope) + begin2;
+          }
+          if (xNeg && !yNeg) {
+            x = Math.round((i - begin) / -slope) + end2;
+          }
+          if (xNeg && yNeg) {
+            x = Math.round((i - begin) / slope) + begin2;
+          }
+
           drawn.push({ x, y, color: state.color });
         }
       }

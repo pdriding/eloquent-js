@@ -250,12 +250,11 @@ function line(start, state, dispatch) {
     let tester = false;
 
     if (begin > end) {
-      console.log(9494949);
       [begin, end] = [end, begin];
     }
 
     if (begin2 > end2) {
-      console.log(7777777777777);
+      console.log(8888888);
       [begin2, end2] = [end2, begin2];
     }
 
@@ -263,20 +262,19 @@ function line(start, state, dispatch) {
 
     for (let i = begin; i <= end; i++) {
       for (let n = begin2; n <= end2; n++) {
+        console.log(slope);
         if (xDif > yDif) {
-          // slope = (end2 - begin2) / (end - begin);
           slope = (end2 - begin2) / (end - begin);
-          // console.log(end2 - begin2, Math.round((i - begin) * slope));
-          // console.log(1, slope);
 
           x = i;
-          y = Math.round((i - begin) * slope) + begin2;
+
+          // y = Math.round((i - begin) * slope) + begin2;
+          y = Math.round((i - begin) * -slope) + end2;
           drawn.push({ x, y, color: state.color });
         } else {
           slope = (end - begin) / (end2 - begin2);
-          // console.log(2, Math.round((n - begin2) / slope) + begin);
-          y = i;
 
+          y = i;
           x = Math.round((i - begin) / slope) + begin2;
           drawn.push({ x, y, color: state.color });
         }

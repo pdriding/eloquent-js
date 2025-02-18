@@ -1,0 +1,37 @@
+1. **Set Up Basic Website Files**
+   - Create a basic HTML page.
+   - Write a simple JavaScript file and include it in the HTML.
+   - Place both files in a directory served by your file server.
+   - Open the HTML page in your browser to verify it loads correctly.
+
+2. **Implement a Simple File Editor (Basic Version)**
+   - **Display File Content:**
+     - Add a `<textarea>` element to your HTML to display file content.
+     - Use JavaScript (with `fetch`) to send a GET request to retrieve the content of a single file (e.g., `index.html`).
+     - Populate the `<textarea>` with the file's content.
+   - **Save File Changes:**
+     - Add a button or wrap the `<textarea>` in a `<form>`.
+     - Attach an event listener (like on form submit) that triggers a PUT request.
+     - When the user clicks the button, send the content from the `<textarea>` as the request body to the same URL to update the file on the server.
+
+3. **Enhance the Editor to Support Multiple Files**
+   - **List Files:**
+     - Use a GET request to fetch the list of files in the server’s top directory (by requesting `/`).
+     - Populate a `<select>` element with `<option>` entries for each file using the returned file list.
+   - **Switch Between Files:**
+     - Add an event listener on the `<select>` element (e.g., on the "change" event) that:
+       - Fetches the content of the selected file.
+       - Updates the `<textarea>` with this new content.
+   - **Save to the Correct File:**
+     - When the user saves changes, ensure that the PUT request is sent to the URL corresponding to the file currently selected in the `<select>` element.
+
+4. **Development Best Practices**
+   - Develop and test your code outside of the publicly accessible directory to avoid accidentally corrupting live files.
+   - Once tested, copy your updated files into the public directory on the file server.
+
+5. **Final Testing**
+   - Verify that the file content loads correctly when selected.
+   - Ensure that updates via the PUT request are successfully reflected on the server.
+   - Confirm that switching between files works seamlessly.
+
+Follow these steps to create a web-based interface that allows users to view and edit files directly from the browser using appropriate HTTP requests.

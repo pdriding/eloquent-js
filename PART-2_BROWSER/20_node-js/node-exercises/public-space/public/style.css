@@ -1,0 +1,32 @@
+body {
+  font-family: Arial, sans-serif;
+  padding: 2em;
+  background: #f4f4f4;
+}
+
+h1 {
+  margin-bottom: 0.5em;
+}
+
+select,
+textarea,
+button {
+  display: block;
+  width: 100%;
+  margin-bottom: 1em;
+}
+
+textarea {
+  height: 400px;
+  font-family: monospace;
+  padding: 0.5em;
+}
+
+button {
+  padding: 0.5em;
+}
+
+#status {
+  font-weight: bold;
+  color: green;
+}

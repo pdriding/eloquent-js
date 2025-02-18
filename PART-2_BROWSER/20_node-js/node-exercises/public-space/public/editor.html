@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>File Editor</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>File Editor</h1>
+
+    <label for="file-select">Select a file to edit:</label>
+    <select id="file-select"></select>
+
+    <form id="editor-form">
+      <textarea
+        id="editor-content"
+        placeholder="File content will load here..."
+      ></textarea>
+      <button id="save-button" type="submit">Save File</button>
+    </form>
+
+    <div id="status"></div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

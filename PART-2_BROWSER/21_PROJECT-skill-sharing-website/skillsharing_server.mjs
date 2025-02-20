@@ -20,9 +20,22 @@ class SkillShareServer {
       });
     });
   }
-  start(port) {
+  async loadTalks() {
+    try {
+      const data = await readFile("talks.json", "utf8");
+      if (data.trim()) {
+        this.talks = JSON.parse(data);
+        console.log("JSON content loaded:", this.talks);
+      } else {
+        console.warn("Talks file is empty. Using default data.");
+      }
+    } catch (err) {
+      console.error("Error reading JSON file:", err);
+    }
+  }
+  async start(port) {
+    await this.loadTalks();
     this.server.listen(port, async () => {
-      const data = await readFile("example.txt", "utf8");
       console.log(`Server is running at http://localhost:${port}`);
     });
   }
@@ -145,12 +158,20 @@ SkillShareServer.prototype.waitForChanges = function (time) {
   });
 };
 
-SkillShareServer.prototype.updated = function () {
+SkillShareServer.prototype.updated = async function () {
   this.version++;
   let response = this.talkResponse();
   this.waiting.forEach((resolve) => resolve(response));
   this.waiting = [];
-  console.log(this);
+
+  // Save to JSON file
+  const jsonData = this.talks;
+
+  try {
+    await writeFile("talks.json", JSON.stringify(jsonData, null, 2), "utf8");
+  } catch (err) {
+    console.error("Error writing JSON file:", err);
+  }
 };
 
 new SkillShareServer({}).start(8000);

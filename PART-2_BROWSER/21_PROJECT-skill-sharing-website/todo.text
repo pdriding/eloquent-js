@@ -1,0 +1,24 @@
+**Step 1: Identify the Problem**  
+- When a talk is updated (for example, when a new comment is added in another window), the entire talk component is redrawn.  
+- Redrawing resets any active inputs, so if a user is typing a comment, their input and focus are lost.
+
+**Step 2: Use a Stateful Talk Component**  
+- Instead of replacing the entire DOM node, treat each talk as an object that maintains its state.  
+- Give each talk component a method (e.g., `syncState`) that updates its internal data (like new comments) without resetting user input.
+
+**Step 3: Keep Track of Components**  
+- Maintain a data structure (like a dictionary or map) that uses talk titles (or another unique identifier) as keys.  
+- This structure will help you quickly determine if a component for a given talk already exists.
+
+**Step 4: Synchronize with Updated Data**  
+- **Loop Over New Talks:**  
+  - For each talk in the updated list, check if a corresponding component exists.  
+  - **If it exists:** Call its `syncState` method to update the talk’s content while preserving the comment field’s current state.  
+  - **If it doesn’t exist:** Create a new talk component and add it to your data structure.
+
+- **Clean Up Removed Talks:**  
+  - Loop through your existing components.  
+  - For each one, verify whether the corresponding talk still exists in the updated data.  
+  - Remove any components whose talks have been deleted.
+
+This process allows you to update the talk list dynamically while ensuring that active comment fields remain undisturbed.

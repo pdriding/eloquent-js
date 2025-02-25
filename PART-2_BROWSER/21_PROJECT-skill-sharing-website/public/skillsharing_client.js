@@ -71,7 +71,7 @@ function elt(type, props, ...children) {
 function renderTalk(talk, dispatch) {
   return elt(
     "section",
-    { className: "talk" },
+    { className: "talk", id: talk.title },
     elt(
       "h2",
       null,
@@ -82,6 +82,7 @@ function renderTalk(talk, dispatch) {
         {
           type: "button",
           onclick() {
+            console.log(555, talk.editTalk("remove"));
             dispatch({ type: "deleteTalk", talk: talk.title });
           },
         },
@@ -97,6 +98,8 @@ function renderTalk(talk, dispatch) {
         onsubmit(event) {
           event.preventDefault();
           let form = event.target;
+
+          talk.editTalk("addComment", form.elements.comment.value);
           dispatch({
             type: "newComment",
             talk: talk.title,
@@ -159,6 +162,7 @@ async function pollTalks(update) {
       continue;
     }
     if (response.status == 304) continue;
+
     tag = response.headers.get("ETag");
     update(await response.json());
   }
@@ -180,10 +184,48 @@ var SkillShareApp = class SkillShareApp {
 
   syncState(state) {
     if (state.talks != this.talks) {
-      // TODO (TOGGLE THESE)
       // this.talkDOM.textContent = "";
-      this.talkDOM.textContent = "";
+
       for (let talk of state.talks) {
+        talk.editTalk = function (action, comment) {
+          let thisNode = Array.from(this.talkDOM.children).find(
+            (child) => child.id === talk.title
+          );
+          if (action === "remove") {
+            thisNode.remove();
+          }
+          if (action === "addComment") {
+            // let newNode = Array.from(this.talkDOM.children).find(
+            //   (child) => child.id === talk.title && child !== thisNode
+            // );
+            let para = document.createElement("p");
+            para.className = "comment";
+
+            let user = document.createElement("strong");
+            user.textContent = talk.presenter;
+
+            para.appendChild(user);
+            para.textContent = comment;
+
+            // TODO Get last comment and append new comment to it.
+            let lastComment = Array.from(thisNode.children)
+              .filter(
+                (child) =>
+                  child.tagName.toLowerCase() === "p" &&
+                  child.classList.contains("comment")
+              )
+              .pop();
+
+            let firstDiv = Array.from(thisNode.children).find(
+              (child) => child.tagName === "div"
+            );
+            console.log(55, lastComment);
+            lastComment
+              ? lastComment.appendChild(para)
+              : firstDiv.appendChild(para);
+          }
+        }.bind(this);
+        // console.log(talk.editTalk());
         this.talkDOM.appendChild(renderTalk(talk, this.dispatch));
       }
       this.talks = state.talks;
@@ -202,6 +244,7 @@ function runApp() {
   pollTalks((talks) => {
     if (!app) {
       state = { user, talks };
+
       app = new SkillShareApp(state, dispatch);
       document.body.appendChild(app.dom);
     } else {

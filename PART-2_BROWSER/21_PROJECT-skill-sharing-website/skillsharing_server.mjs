@@ -124,7 +124,9 @@ router.add(
 );
 
 SkillShareServer.prototype.talkResponse = function () {
-  let talks = Object.keys(this.talks).map((title) => this.talks[title]);
+  let talks = Object.keys(this.talks).map((title) => {
+    return this.talks[title];
+  });
   return {
     body: JSON.stringify(talks),
     headers: {

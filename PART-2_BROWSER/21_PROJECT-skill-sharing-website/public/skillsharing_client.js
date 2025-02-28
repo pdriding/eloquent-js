@@ -82,7 +82,7 @@ function renderTalk(talk, dispatch) {
         {
           type: "button",
           onclick() {
-            console.log(555, talk.editTalk("remove"));
+            talk.editTalk("remove");
             dispatch({ type: "deleteTalk", talk: talk.title });
           },
         },
@@ -167,65 +167,6 @@ async function pollTalks(update) {
   }
 }
 
-// var SkillShareApp = class SkillShareApp {
-//   constructor(state, dispatch) {
-//     this.dispatch = dispatch;
-//     this.talkDOM = elt("div", { className: "talks" });
-//     this.dom = elt(
-//       "div",
-//       null,
-//       renderUserField(state.user, dispatch),
-//       this.talkDOM,
-//       renderTalkForm(dispatch)
-//     );
-//     this.syncState(state);
-//   }
-
-//   syncState(state) {
-//     if (state.talks != this.talks) {
-//       // this.talkDOM.textContent = "";
-
-//       for (let talk of state.talks) {
-//         talk.editTalk = function (action, comment) {
-//           let thisNode = Array.from(this.talkDOM.children).find(
-//             (child) => child.id === talk.title
-//           );
-//           if (action === "remove") {
-//             thisNode.remove();
-//           }
-//           if (action === "addComment") {
-//             // let newNode = Array.from(this.talkDOM.children).find(
-//             //   (child) => child.id === talk.title && child !== thisNode
-//             // );
-//             let para = document.createElement("p");
-//             para.className = "comment";
-
-//             let user = document.createElement("strong");
-//             user.textContent = talk.presenter;
-
-//             para.appendChild(user);
-//             // para.textContent = comment;
-//             para.appendChild(document.createTextNode(`: ${comment}`));
-
-//             let form = Array.from(thisNode.children).find(
-//               (child) => child.tagName.toLowerCase() === "form"
-//             );
-
-//             form.parentNode.insertBefore(para, form);
-//           }
-//         }.bind(this);
-
-//         // 1 TODO Append submit
-//         if (true) {
-//           console.log(555555, talk);
-//           this.talkDOM.appendChild(renderTalk(talk, this.dispatch));
-//         }
-//       }
-//       this.talks = state.talks;
-//     }
-//   }
-// };
-
 var SkillShareApp = class SkillShareApp {
   constructor(state, dispatch) {
     this.dispatch = dispatch;
@@ -237,13 +178,12 @@ var SkillShareApp = class SkillShareApp {
       this.talkDOM,
       renderTalkForm(dispatch)
     );
-    this.syncState(state);
+    this.syncState(state, "loadTalks");
   }
 
-  syncState(state) {
+  syncState(state, action) {
+    console.log(36565);
     if (state.talks != this.talks) {
-      // this.talkDOM.textContent = "";
-
       for (let talk of state.talks) {
         talk.editTalk = function (action, comment) {
           let thisNode = Array.from(this.talkDOM.children).find(
@@ -252,10 +192,7 @@ var SkillShareApp = class SkillShareApp {
           if (action === "remove") {
             thisNode.remove();
           }
-          if (action === "addComment") {
-            // let newNode = Array.from(this.talkDOM.children).find(
-            //   (child) => child.id === talk.title && child !== thisNode
-            // );
+          if (true) {
             let para = document.createElement("p");
             para.className = "comment";
 
@@ -263,7 +200,6 @@ var SkillShareApp = class SkillShareApp {
             user.textContent = talk.presenter;
 
             para.appendChild(user);
-            // para.textContent = comment;
             para.appendChild(document.createTextNode(`: ${comment}`));
 
             let form = Array.from(thisNode.children).find(
@@ -273,15 +209,19 @@ var SkillShareApp = class SkillShareApp {
             form.parentNode.insertBefore(para, form);
           }
         }.bind(this);
-        // 1  Append submit
 
-        // TODO  Compare talks and find the one that is not included and append.
         if (this.talks) {
-          console.log(555555, this.talks, state.talks);
-          let test = state.talks.find(
+          let newTalk = state.talks.find(
             (talk) => !this.talks.some((t) => t.id === talk.id)
           );
-          console.log(test);
+
+          if (newTalk) {
+            console.log(7);
+            this.talkDOM.appendChild(renderTalk(newTalk, this.dispatch));
+            this.talks.push(newTalk);
+          }
+        }
+        if (action === "loadTalks") {
           this.talkDOM.appendChild(renderTalk(talk, this.dispatch));
         }
       }
@@ -295,10 +235,8 @@ function runApp() {
   let user = localStorage.getItem("userName") || "Anon";
   let state, app;
   function dispatch(action) {
-    // 2 TODO See how this helps
-    console.log(777, action);
     state = handleAction(state, action);
-    console.log(999, state);
+
     app.syncState(state);
   }
 
@@ -307,8 +245,12 @@ function runApp() {
       state = { user, talks };
 
       app = new SkillShareApp(state, dispatch);
+      app.syncState(state);
+
       document.body.appendChild(app.dom);
     } else {
+      // TODO Use SetInterval to check DOM on 2 tabs and to check backend and update when needed
+      setInterval(() => app.syncState(state), 2000);
       dispatch({ type: "setTalks", talks });
     }
   }).catch(reportError);

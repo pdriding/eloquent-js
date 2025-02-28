@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import serveStatic from "serve-static";
 import { writeFile } from "fs/promises";
 import { readFile } from "fs/promises";
+import crypto from "crypto";
 
 function notFound(request, response) {
   response.writeHead(404, "Not found");
@@ -97,6 +98,7 @@ router.add("PUT", talkPath, async (server, title, request) => {
     presenter: talk.presenter,
     summary: talk.summary,
     comments: [],
+    id: crypto.randomUUID(),
   };
   server.updated();
   return { status: 204 };

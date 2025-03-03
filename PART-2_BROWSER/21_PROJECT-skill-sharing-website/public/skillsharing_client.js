@@ -71,7 +71,7 @@ function elt(type, props, ...children) {
 function renderTalk(talk, dispatch) {
   return elt(
     "section",
-    { className: "talk", id: talk.title },
+    { className: "talk", id: talk.id },
     elt(
       "h2",
       null,
@@ -82,7 +82,7 @@ function renderTalk(talk, dispatch) {
         {
           type: "button",
           onclick() {
-            talk.editTalk("remove");
+            // talk.editTalk("remove");
             dispatch({ type: "deleteTalk", talk: talk.title });
           },
         },
@@ -98,7 +98,7 @@ function renderTalk(talk, dispatch) {
         onsubmit(event) {
           event.preventDefault();
           let form = event.target;
-          talk.editTalk("addComment", form.elements.comment.value);
+          // talk.editTalk("addComment", form.elements.comment.value);
           dispatch({
             type: "newComment",
             talk: talk.title,
@@ -179,37 +179,68 @@ var SkillShareApp = class SkillShareApp {
       renderTalkForm(dispatch)
     );
     this.syncState(state, "loadTalks");
+    setInterval(() => this.syncState(state), 2000);
   }
 
-  syncState(state, action) {
-    console.log(36565);
+  async getTalks() {
+    try {
+      let response = await fetch("/talks");
+      let data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching JSON:", error);
+    }
+  }
+
+  async syncState(state, action) {
+    state.talks = await this.getTalks();
+
+    // DELETE TALK
+    if (state.talks.length < this.talks?.length) {
+      let talk = this.talks.find(
+        (talk) => !state.talks.some((t) => t.id === talk.id)
+      );
+      let thisNode = Array.from(this.talkDOM.children).find(
+        (child) => child.id === talk.id
+      );
+      thisNode.remove();
+      this.talks = state.talks;
+    }
+
+    // ADD COMMENTS
+    let stateComments = state.talks.map((talk) => talk.comments).flat();
+    let thisComments = this.talks?.map((talk) => talk.comments).flat();
+    if (stateComments.length !== thisComments?.length && thisComments) {
+      let presentTalk = state.talks.find(
+        (talk) =>
+          this.talks.find((talk2) => talk2.id === talk.id).comments.length !==
+          talk.comments.length
+      );
+      let thisNode = Array.from(this.talkDOM.children).find(
+        (child) => child.id === presentTalk.id
+      );
+      let comment = stateComments.at(-1);
+
+      console.log(66);
+
+      let para = document.createElement("p");
+      para.className = "comment";
+
+      let user = document.createElement("strong");
+      user.textContent = presentTalk.presenter;
+
+      para.appendChild(user);
+      para.appendChild(document.createTextNode(`: ${comment.message}`));
+
+      let form = Array.from(thisNode.children).find(
+        (child) => child.tagName.toLowerCase() === "form"
+      );
+
+      form.parentNode.insertBefore(para, form);
+    }
+
     if (state.talks != this.talks) {
       for (let talk of state.talks) {
-        talk.editTalk = function (action, comment) {
-          let thisNode = Array.from(this.talkDOM.children).find(
-            (child) => child.id === talk.title
-          );
-          if (action === "remove") {
-            thisNode.remove();
-          }
-          if (true) {
-            let para = document.createElement("p");
-            para.className = "comment";
-
-            let user = document.createElement("strong");
-            user.textContent = talk.presenter;
-
-            para.appendChild(user);
-            para.appendChild(document.createTextNode(`: ${comment}`));
-
-            let form = Array.from(thisNode.children).find(
-              (child) => child.tagName.toLowerCase() === "form"
-            );
-
-            form.parentNode.insertBefore(para, form);
-          }
-        }.bind(this);
-
         if (this.talks) {
           let newTalk = state.talks.find(
             (talk) => !this.talks.some((t) => t.id === talk.id)
@@ -231,6 +262,104 @@ var SkillShareApp = class SkillShareApp {
   }
 };
 
+// THEIR SOLUTION
+// class Talk {
+//   constructor(talk, dispatch) {
+//     this.comments = elt("div");
+//     this.dom = elt(
+//       "section",
+//       { className: "talk" },
+//       elt(
+//         "h2",
+//         null,
+//         talk.title,
+//         " ",
+//         elt(
+//           "button",
+//           {
+//             type: "button",
+//             onclick: () => dispatch({ type: "deleteTalk", talk: talk.title }),
+//           },
+//           "Delete"
+//         )
+//       ),
+//       elt("div", null, "by ", elt("strong", null, talk.presenter)),
+//       elt("p", null, talk.summary),
+//       this.comments,
+//       elt(
+//         "form",
+//         {
+//           onsubmit(event) {
+//             event.preventDefault();
+//             let form = event.target;
+//             dispatch({
+//               type: "newComment",
+//               talk: talk.title,
+//               message: form.elements.comment.value,
+//             });
+//             form.reset();
+//           },
+//         },
+//         elt("input", { type: "text", name: "comment" }),
+//         " ",
+//         elt("button", { type: "submit" }, "Add comment")
+//       )
+//     );
+//     this.syncState(talk);
+//   }
+
+//   syncState(talk) {
+//     this.talk = talk;
+//     this.comments.textContent = "";
+//     for (let comment of talk.comments) {
+//       this.comments.appendChild(renderComment(comment));
+//     }
+//   }
+// }
+
+// class SkillShareApp {
+//   constructor(state, dispatch) {
+//     this.dispatch = dispatch;
+//     this.talkDOM = elt("div", { className: "talks" });
+//     this.talkMap = Object.create(null);
+//     this.dom = elt(
+//       "div",
+//       null,
+//       renderUserField(state.user, dispatch),
+//       this.talkDOM,
+//       renderTalkForm(dispatch)
+//     );
+//     this.syncState(state);
+//   }
+
+//   syncState(state) {
+//     if (state.talks == this.talks) return;
+//     this.talks = state.talks;
+
+//     for (let talk of state.talks) {
+//       let found = this.talkMap[talk.title];
+//       if (
+//         found &&
+//         found.talk.presenter == talk.presenter &&
+//         found.talk.summary == talk.summary
+//       ) {
+//         found.syncState(talk);
+//       } else {
+//         if (found) found.dom.remove();
+//         found = new Talk(talk, this.dispatch);
+//         this.talkMap[talk.title] = found;
+//         this.talkDOM.appendChild(found.dom);
+//       }
+//     }
+//     for (let title of Object.keys(this.talkMap)) {
+//       if (!state.talks.some((talk) => talk.title == title)) {
+//         this.talkMap[title].dom.remove();
+//         delete this.talkMap[title];
+//       }
+//     }
+//   }
+// }
+
 function runApp() {
   let user = localStorage.getItem("userName") || "Anon";
   let state, app;
@@ -249,11 +378,74 @@ function runApp() {
 
       document.body.appendChild(app.dom);
     } else {
-      // TODO Use SetInterval to check DOM on 2 tabs and to check backend and update when needed
-      setInterval(() => app.syncState(state), 2000);
       dispatch({ type: "setTalks", talks });
     }
   }).catch(reportError);
 }
 
 runApp();
+
+// var SkillShareApp = class SkillShareApp {
+//   constructor(state, dispatch) {
+//     this.dispatch = dispatch;
+//     this.talkDOM = elt("div", { className: "talks" });
+//     this.dom = elt(
+//       "div",
+//       null,
+//       renderUserField(state.user, dispatch),
+//       this.talkDOM,
+//       renderTalkForm(dispatch)
+//     );
+//     this.syncState(state, "loadTalks");
+//     setInterval(() => this.syncState(state), 2000);
+//   }
+
+//   syncState(state, action) {
+//     console.log(this.talks);
+//     if (state.talks != this.talks) {
+//       for (let talk of state.talks) {
+//         talk.editTalk = function (action, comment) {
+//           let thisNode = Array.from(this.talkDOM.children).find(
+//             (child) => child.id === talk.title
+//           );
+//           if (action === "remove") {
+//             thisNode.remove();
+//           }
+//           if (true) {
+//             let para = document.createElement("p");
+//             para.className = "comment";
+
+//             let user = document.createElement("strong");
+//             user.textContent = talk.presenter;
+
+//             para.appendChild(user);
+//             para.appendChild(document.createTextNode(`: ${comment}`));
+
+//             let form = Array.from(thisNode.children).find(
+//               (child) => child.tagName.toLowerCase() === "form"
+//             );
+
+//             form.parentNode.insertBefore(para, form);
+//           }
+//         }.bind(this);
+
+//         if (this.talks) {
+//           let newTalk = state.talks.find(
+//             (talk) => !this.talks.some((t) => t.id === talk.id)
+//           );
+
+//           if (newTalk) {
+//             console.log(7);
+//             this.talkDOM.appendChild(renderTalk(newTalk, this.dispatch));
+//             this.talks.push(newTalk);
+//           }
+//         }
+//         if (action === "loadTalks") {
+//           this.talkDOM.appendChild(renderTalk(talk, this.dispatch));
+//         }
+//       }
+
+//       this.talks = state.talks;
+//     }
+//   }
+// };
